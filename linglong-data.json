@@ -1,39 +1,201 @@
-{
-  "status": "ok",
-  "timestamp": "2026-03-28T04:30:00Z",
-  "version": "2.0",
-  "stats": {
-    "online": 11,
-    "onlineChange": 5,
-    "tokens": "1.71M",
-    "tokensChange": 12,
-    "tasks": 13,
-    "tasksDone": 8,
-    "rate": "2.4K"
-  },
-  "employees": [
-    { "id": "lingshu", "name": "灵枢", "role": "Supervisor", "dept": "中枢", "avatar": "🎯", "status": "working", "task": "任务调度" },
-    { "id": "lingmou", "name": "灵眸", "role": "情报分析师", "dept": "情报", "avatar": "👁️", "status": "working", "task": "情报收集" },
-    { "id": "lingyun", "name": "灵韵", "role": "内容策划", "dept": "情报", "avatar": "📢", "status": "working", "task": "数据可视化" },
-    { "id": "lingtan", "name": "灵探", "role": "市场研究", "dept": "情报", "avatar": "🔎", "status": "idle", "task": "待命" },
-    { "id": "lingxi", "name": "灵析", "role": "需求分析", "dept": "开发", "avatar": "📋", "status": "working", "task": "PRD撰写" },
-    { "id": "linggou", "name": "灵构", "role": "系统架构", "dept": "开发", "avatar": "🏗️", "status": "working", "task": "架构设计" },
-    { "id": "lingma", "name": "灵码", "role": "开发工程师", "dept": "开发", "avatar": "💻", "status": "working", "task": "代码开发" },
-    { "id": "lingjian", "name": "灵检", "role": "代码审查", "dept": "开发", "avatar": "🔍", "status": "working", "task": "Code Review" },
-    { "id": "lingce", "name": "灵测", "role": "测试工程师", "dept": "开发", "avatar": "🧪", "status": "idle", "task": "待命" },
-    { "id": "lingbi", "name": "灵笔", "role": "技术文档", "dept": "文档", "avatar": "✍️", "status": "working", "task": "文档编写" },
-    { "id": "lingshen", "name": "灵审", "role": "内容审核", "dept": "文档", "avatar": "✓", "status": "idle", "task": "待命" },
-    { "id": "lingxuan", "name": "灵宣", "role": "产品文案", "dept": "文档", "avatar": "📣", "status": "idle", "task": "待命" },
-    { "id": "linghui", "name": "灵绘", "role": "图像生成", "dept": "视觉", "avatar": "🎨", "status": "working", "task": "插画创作" },
-    { "id": "lingshe", "name": "灵设", "role": "UI设计", "dept": "视觉", "avatar": "🖼️", "status": "idle", "task": "待命" },
-    { "id": "lingyan", "name": "灵演", "role": "PPT制作", "dept": "演示", "avatar": "📽️", "status": "idle", "task": "待命" },
-    { "id": "lingwei", "name": "灵卫", "role": "安全运维", "dept": "安卫", "avatar": "🛡️", "status": "working", "task": "系统监控" }
-  ],
-  "tasks": [
-    { "title": "AI外贸情报日报生成", "priority": "high", "assignee": "灵眸", "dept": "情报", "time": "10分钟前" },
-    { "title": "StepClaw Dashboard 重构", "priority": "high", "assignee": "灵码", "dept": "开发", "time": "进行中" },
-    { "title": "代码审查 - Dashboard模块", "priority": "medium", "assignee": "灵检", "dept": "开发", "time": "30分钟前" },
-    { "title": "文档更新 - API接口文档", "priority": "low", "assignee": "灵笔", "dept": "文档", "time": "1小时前" },
-    { "title": "GitHub Actions 工作流优化", "priority": "medium", "assignee": "灵构", "dept": "开发", "time": "2小时前" }
-  ]
+﻿{
+    "status":  "ok",
+    "timestamp":  "2026-03-28T05:46:18.579Z",
+    "version":  "2.0",
+    "stats":  {
+                  "online":  10,
+                  "onlineChange":  0,
+                  "tokens":  "1.83M",
+                  "tokensChange":  6,
+                  "tasks":  13,
+                  "tasksDone":  9,
+                  "rate":  "2.4K"
+              },
+    "employees":  [
+                      {
+                          "id":  "lingshu",
+                          "name":  "çµæ¢",
+                          "role":  "Supervisor",
+                          "dept":  "ä¸­æ¢",
+                          "avatar":  "ð¯",
+                          "status":  "working",
+                          "task":  "ä»»å¡è°åº¦"
+                      },
+                      {
+                          "id":  "lingmou",
+                          "name":  "çµç¸",
+                          "role":  "æ\u0085æ¥åæå¸",
+                          "dept":  "æ\u0085æ¥",
+                          "avatar":  "ðï¸",
+                          "status":  "working",
+                          "task":  "æ\u0085æ¥æ¶é"
+                      },
+                      {
+                          "id":  "lingyun",
+                          "name":  "çµéµ",
+                          "role":  "å\u0085å®¹ç­å",
+                          "dept":  "æ\u0085æ¥",
+                          "avatar":  "ð¢",
+                          "status":  "working",
+                          "task":  "æ°æ®å¯è§å"
+                      },
+                      {
+                          "id":  "lingtan",
+                          "name":  "çµæ¢",
+                          "role":  "å¸åºç ç©¶",
+                          "dept":  "æ\u0085æ¥",
+                          "avatar":  "ð",
+                          "status":  "idle",
+                          "task":  "å¾\u0085å½"
+                      },
+                      {
+                          "id":  "lingxi",
+                          "name":  "çµæ",
+                          "role":  "éæ±åæ",
+                          "dept":  "å¼å",
+                          "avatar":  "ð",
+                          "status":  "working",
+                          "task":  "PRDæ°å"
+                      },
+                      {
+                          "id":  "linggou",
+                          "name":  "çµæ",
+                          "role":  "ç³»ç»æ¶æ",
+                          "dept":  "å¼å",
+                          "avatar":  "ðï¸",
+                          "status":  "working",
+                          "task":  "æ¶æè®¾è®¡"
+                      },
+                      {
+                          "id":  "lingma",
+                          "name":  "çµç ",
+                          "role":  "å¼åå·¥ç¨å¸",
+                          "dept":  "å¼å",
+                          "avatar":  "ð»",
+                          "status":  "working",
+                          "task":  "ä»£ç å¼å"
+                      },
+                      {
+                          "id":  "lingjian",
+                          "name":  "çµæ£",
+                          "role":  "ä»£ç å®¡æ¥",
+                          "dept":  "å¼å",
+                          "avatar":  "ð",
+                          "status":  "working",
+                          "task":  "Code Review"
+                      },
+                      {
+                          "id":  "lingce",
+                          "name":  "çµæµ",
+                          "role":  "æµè¯å·¥ç¨å¸",
+                          "dept":  "å¼å",
+                          "avatar":  "ð§ª",
+                          "status":  "idle",
+                          "task":  "å¾\u0085å½"
+                      },
+                      {
+                          "id":  "lingbi",
+                          "name":  "çµç¬",
+                          "role":  "ææ¯ææ¡£",
+                          "dept":  "ææ¡£",
+                          "avatar":  "âï¸",
+                          "status":  "working",
+                          "task":  "ææ¡£ç¼å"
+                      },
+                      {
+                          "id":  "lingshen",
+                          "name":  "çµå®¡",
+                          "role":  "å\u0085å®¹å®¡æ ¸",
+                          "dept":  "ææ¡£",
+                          "avatar":  "â",
+                          "status":  "idle",
+                          "task":  "å¾\u0085å½"
+                      },
+                      {
+                          "id":  "lingxuan",
+                          "name":  "çµå®£",
+                          "role":  "äº§åææ¡",
+                          "dept":  "ææ¡£",
+                          "avatar":  "ð£",
+                          "status":  "idle",
+                          "task":  "å¾\u0085å½"
+                      },
+                      {
+                          "id":  "linghui",
+                          "name":  "çµç»",
+                          "role":  "å¾åçæ",
+                          "dept":  "è§è§",
+                          "avatar":  "ð¨",
+                          "status":  "working",
+                          "task":  "æç»åä½"
+                      },
+                      {
+                          "id":  "lingshe",
+                          "name":  "çµè®¾",
+                          "role":  "UIè®¾è®¡",
+                          "dept":  "è§è§",
+                          "avatar":  "ð¼ï¸",
+                          "status":  "idle",
+                          "task":  "å¾\u0085å½"
+                      },
+                      {
+                          "id":  "lingyan",
+                          "name":  "çµæ¼",
+                          "role":  "PPTå¶ä½",
+                          "dept":  "æ¼ç¤º",
+                          "avatar":  "ð½ï¸",
+                          "status":  "idle",
+                          "task":  "å¾\u0085å½"
+                      },
+                      {
+                          "id":  "lingwei",
+                          "name":  "çµå«",
+                          "role":  "å®å\u0085¨è¿ç»´",
+                          "dept":  "å®å«",
+                          "avatar":  "ð¡ï¸",
+                          "status":  "working",
+                          "task":  "ç³»ç»çæ§"
+                      }
+                  ],
+    "tasks":  [
+                  {
+                      "title":  "AIå¤è´¸æ\u0085æ¥æ¥æ¥çæ",
+                      "priority":  "high",
+                      "assignee":  "çµç¸",
+                      "dept":  "æ\u0085æ¥",
+                      "time":  "10åéå"
+                  },
+                  {
+                      "title":  "StepClaw Dashboard éæ",
+                      "priority":  "high",
+                      "assignee":  "çµç ",
+                      "dept":  "å¼å",
+                      "time":  "è¿è¡ä¸­"
+                  },
+                  {
+                      "title":  "ä»£ç å®¡æ¥ - Dashboardæ¨¡å",
+                      "priority":  "medium",
+                      "assignee":  "çµæ£",
+                      "dept":  "å¼å",
+                      "time":  "30åéå"
+                  },
+                  {
+                      "title":  "ææ¡£æ´æ° - APIæ¥å£ææ¡£",
+                      "priority":  "low",
+                      "assignee":  "çµç¬",
+                      "dept":  "ææ¡£",
+                      "time":  "1å°æ¶å"
+                  },
+                  {
+                      "title":  "GitHub Actions å·¥ä½æµä¼å",
+                      "priority":  "medium",
+                      "assignee":  "çµæ",
+                      "dept":  "å¼å",
+                      "time":  "2å°æ¶å"
+                  }
+              ],
+    "stepclaw":  {
+                     "sessions":  8,
+                     "activeSessions":  0
+                 }
 }
