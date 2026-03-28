@@ -2,7 +2,7 @@ name: Update Dashboard Data
 
 on:
   schedule:
-    - cron: '*/2 * * * *'  # 每2分钟
+    - cron: '*/2 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -24,18 +24,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Update Data Files
+      - name: Update StepClaw Data
         run: |
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           TIMESTAMP_1H=$(date -u -d '1 hour ago' +%Y-%m-%dT%H:%M:%SZ)
-          ONLINE=$((10 + RANDOM % 6))
-          TASKS_DONE=$((5 + RANDOM % 8))
           
-          # Update data.json
-          cat > data.json << EOF
+          cat > data.json << 'DATAJSON'
           {
             "status": "ok",
-            "timestamp": "$TIMESTAMP",
+            "timestamp": "TIMESTAMP_PLACEHOLDER",
             "overview": {
               "sessions": { "total": 2, "active": 2, "channels": ["feishu"] },
               "tokens": { "total": 192840, "formatted": "192.8k" },
@@ -53,7 +50,7 @@ jobs:
                 "tokens": 85660,
                 "messages": 42,
                 "kind": "direct",
-                "updatedAt": "$TIMESTAMP"
+                "updatedAt": "TIMESTAMP_PLACEHOLDER"
               },
               {
                 "key": "agent:main:heartbeat",
@@ -63,7 +60,7 @@ jobs:
                 "tokens": 107180,
                 "messages": 128,
                 "kind": "direct",
-                "updatedAt": "$TIMESTAMP_1H"
+                "updatedAt": "TIMESTAMP_1H_PLACEHOLDER"
               }
             ],
             "agents": [
@@ -85,21 +82,31 @@ jobs:
               { "name": "outbound-privacy-guard", "version": "2.0.2" }
             ]
           }
-          EOF
+          DATAJSON
           
-          # Update linglong-data.json
+          sed -i "s/TIMESTAMP_PLACEHOLDER/$TIMESTAMP/g" data.json
+          sed -i "s/TIMESTAMP_1H_PLACEHOLDER/$TIMESTAMP_1H/g" data.json
+
+      - name: Update Linglong Data
+        run: |
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          ONLINE=$((10 + RANDOM % 6))
+          TASKS_DONE=$((5 + RANDOM % 8))
+          ONLINE_CHANGE=$((RANDOM % 10))
+          TOKENS_CHANGE=$((RANDOM % 20))
+          
           cat > linglong-data.json << 'LINGLONG'
           {
             "status": "ok",
-            "timestamp": "$TIMESTAMP",
+            "timestamp": "TIMESTAMP_PH",
             "version": "2.0",
             "stats": {
-              "online": $ONLINE,
-              "onlineChange": $((RANDOM % 10)),
+              "online": ONLINE_PH,
+              "onlineChange": ONLINE_CHANGE_PH,
               "tokens": "1.71M",
-              "tokensChange": $((RANDOM % 20)),
+              "tokensChange": TOKENS_CHANGE_PH,
               "tasks": 13,
-              "tasksDone": $TASKS_DONE,
+              "tasksDone": TASKS_DONE_PH,
               "rate": "2.4K"
             },
             "employees": [
@@ -129,6 +136,12 @@ jobs:
             ]
           }
           LINGLONG
+          
+          sed -i "s/TIMESTAMP_PH/$TIMESTAMP/g" linglong-data.json
+          sed -i "s/ONLINE_PH/$ONLINE/g" linglong-data.json
+          sed -i "s/ONLINE_CHANGE_PH/$ONLINE_CHANGE/g" linglong-data.json
+          sed -i "s/TOKENS_CHANGE_PH/$TOKENS_CHANGE/g" linglong-data.json
+          sed -i "s/TASKS_DONE_PH/$TASKS_DONE/g" linglong-data.json
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
