@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>灵笼数字办公室 | StepClaw Dashboard v2.0</title>
+    <link rel="stylesheet" href="css-variables.css">
+    <link rel="stylesheet" href="components.css">
+    <style>
+        /* 页面特定样式 */
+        .last-update {
+            color: var(--ll-text-subtle);
+            font-size: var(--ll-text-xs);
+        }
+        
+        /* 部门颜色映射 */
+        .dept-core { --dept-color: var(--ll-dept-core); }
+        .dept-intel { --dept-color: var(--ll-dept-intel); }
+        .dept-dev { --dept-color: var(--ll-dept-dev); }
+        .dept-doc { --dept-color: var(--ll-dept-doc); }
+        .dept-visual { --dept-color: var(--ll-dept-visual); }
+        .dept-demo { --dept-color: var(--ll-dept-demo); }
+        .dept-security { --dept-color: var(--ll-dept-security); }
+        
+        .ll-employee-avatar[data-dept] {
+            background: linear-gradient(135deg, var(--dept-color) 0%, var(--ll-primary-purple) 100%);
+        }
+        
+        /* 状态指示器 */
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .status-indicator--online {
+            background: var(--ll-success);
+            box-shadow: 0 0 8px var(--ll-success);
+            animation: ll-pulse 2s infinite;
+        }
+        
+        .status-indicator--idle {
+            background: var(--ll-text-subtle);
+        }
+        
+        .status-indicator--offline {
+            background: var(--ll-text-disabled);
+        }
+        
+        /* 更新时间 */
+        .update-time {
+            display: flex;
+            align-items: center;
+            gap: var(--ll-space-2);
+            color: var(--ll-text-muted);
+            font-size: var(--ll-text-xs);
+        }
+        
+        /* 刷新按钮 */
+        .refresh-btn {
+            display: flex;
+            align-items: center;
+            gap: var(--ll-space-2);
+        }
+        
+        .refresh-btn.spinning .refresh-icon {
+            animation: ll-spin 1s linear infinite;
+        }
+        
+        /* 统计数字动画 */
+        .count-up {
+            animation: countUp 0.5s var(--ll-ease-out);
+        }
+        
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 卡片进入动画 */
+        .ll-stat-card {
+            animation: ll-fade-in-up 0.5s var(--ll-ease-out) backwards;
+        }
+        
+        .ll-stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .ll-stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .ll-stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .ll-stat-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        /* 员工卡片进入动画 */
+        .ll-employee-card {
+            animation: ll-fade-in-up 0.4s var(--ll-ease-out) backwards;
+        }
+        
+        /* 任务项进入动画 */
+        .ll-task-item {
+            animation: ll-slide-in-right 0.4s var(--ll-ease-out) backwards;
+        }
+        
+        /* 粒子画布 */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- 粒子效果画布 -->
+    <canvas id="particles-canvas"></canvas>
+    
+    <!-- 动态光效背景 -->
+    <div class="ll-glow-bg"></div>
+    
+    <div class="main-content">
+        <!-- 头部 -->
+        <header class="ll-header">
+            <div class="ll-header-brand">
+                <div class="ll-logo">🏢</div>
+                <div class="ll-header-title">
+                    <h1>灵笼数字办公室</h1>
+                    <div class="version">StepClaw Dashboard v2.0</div>
+                </div>
+            </div>
+            <div class="ll-header-status">
+                <div class="ll-status-badge">
+                    <div class="ll-status-dot"></div>
+                    <span id="online-count">--/16 在线</span>
+                </div>
+                <span class="last-update" id="last-update">--</span>
+                <button class="ll-btn ll-btn--primary refresh-btn" onclick="loadData()">
+                    <span class="refresh-icon">🔄</span>
+                    <span>刷新</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- 主容器 -->
+        <div class="ll-container">
+            <!-- 统计卡片 -->
+            <div class="ll-stats-grid">
+                <div class="ll-stat-card">
+                    <div class="ll-stat-icon ll-stat-icon--blue">👥</div>
+                    <div class="ll-stat-label">在线员工</div>
+                    <div class="ll-stat-value" id="stat-online">--</div>
+                    <div class="ll-stat-change ll-stat-change--up">
+                        <span>↑</span>
+                        <span id="stat-online-change">--</span>%
+                    </div>
+                </div>
+                <div class="ll-stat-card">
+                    <div class="ll-stat-icon ll-stat-icon--purple">🔤</div>
+                    <div class="ll-stat-label">Token消耗</div>
+                    <div class="ll-stat-value" id="stat-tokens">--</div>
+                    <div class="ll-stat-change ll-stat-change--up">
+                        <span>↑</span>
+                        <span id="stat-tokens-change">--</span>%
+                    </div>
+                </div>
+                <div class="ll-stat-card">
+                    <div class="ll-stat-icon ll-stat-icon--green">✅</div>
+                    <div class="ll-stat-label">今日任务</div>
+                    <div class="ll-stat-value" id="stat-tasks">--</div>
+                    <div class="ll-stat-change ll-stat-change--neutral">
+                        <span id="stat-tasks-done">--</span> 已完成
+                    </div>
+                </div>
+                <div class="ll-stat-card">
+                    <div class="ll-stat-icon ll-stat-icon--orange">⚡</div>
+                    <div class="ll-stat-label">实时速率</div>
+                    <div class="ll-stat-value" id="stat-rate">--</div>
+                    <div class="ll-stat-change ll-stat-change--neutral">tokens/min</div>
+                </div>
+            </div>
+
+            <!-- 标签页 -->
+            <div class="ll-tabs">
+                <button class="ll-tab ll-tab--active" data-tab="employees" onclick="switchTab('employees')">
+                    👥 员工状态
+                </button>
+                <button class="ll-tab" data-tab="tasks" onclick="switchTab('tasks')">
+                    📋 任务列表
+                </button>
+                <button class="ll-tab" data-tab="stats" onclick="switchTab('stats')">
+                    📊 统计分析
+                </button>
+            </div>
+
+            <!-- 员工状态标签页 -->
+            <div id="tab-employees" class="ll-tab-content ll-tab-content--active">
+                <div class="ll-section">
+                    <div class="ll-section-header">
+                        <div class="ll-section-title">员工状态</div>
+                        <div class="ll-badge ll-badge--info">
+                            <span id="employee-count">--</span> 人
+                        </div>
+                    </div>
+                    <div id="employees-loading" class="ll-loading">
+                        <div class="ll-loading-spinner"></div>
+                        <div class="ll-loading-text">连接灵笼数据中心...</div>
+                    </div>
+                    <div id="employees-grid" class="ll-employees-grid" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- 任务列表标签页 -->
+            <div id="tab-tasks" class="ll-tab-content">
+                <div class="ll-section">
+                    <div class="ll-section-header">
+                        <div class="ll-section-title">任务列表</div>
+                        <div class="ll-badge ll-badge--warning">
+                            <span id="task-count">--</span> 进行中
+                        </div>
+                    </div>
+                    <div id="tasks-loading" class="ll-loading">
+                        <div class="ll-loading-spinner"></div>
+                        <div class="ll-loading-text">加载任务数据...</div>
+                    </div>
+                    <div id="tasks-list" class="ll-tasks-list" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- 统计分析标签页 -->
+            <div id="tab-stats" class="ll-tab-content">
+                <div class="ll-section">
+                    <div class="ll-section-header">
+                        <div class="ll-section-title">系统概览</div>
+                    </div>
+                    <div class="ll-stats-grid">
+                        <div class="ll-stat-card">
+                            <div class="ll-stat-icon ll-stat-icon--blue">🤖</div>
+                            <div class="ll-stat-label">Agents</div>
+                            <div class="ll-stat-value">4</div>
+                            <div class="ll-stat-change ll-stat-change--neutral">活跃中</div>
+                        </div>
+                        <div class="ll-stat-card">
+                            <div class="ll-stat-icon ll-stat-icon--purple">🧩</div>
+                            <div class="ll-stat-label">技能</div>
+                            <div class="ll-stat-value">25</div>
+                            <div class="ll-stat-change ll-stat-change--neutral">已加载</div>
+                        </div>
+                        <div class="ll-stat-card">
+                            <div class="ll-stat-icon ll-stat-icon--green">📡</div>
+                            <div class="ll-stat-label">渠道</div>
+                            <div class="ll-stat-value">1</div>
+                            <div class="ll-stat-change ll-stat-change--neutral">飞书</div>
+                        </div>
+                        <div class="ll-stat-card">
+                            <div class="ll-stat-icon ll-stat-icon--cyan">⏱️</div>
+                            <div class="ll-stat-label">更新频率</div>
+                            <div class="ll-stat-value">30s</div>
+                            <div class="ll-stat-change ll-stat-change--neutral">自动刷新</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ll-section">
+                    <div class="ll-section-header">
+                        <div class="ll-section-title">部门分布</div>
+                    </div>
+                    <div class="ll-employees-grid" id="dept-stats">
+                        <!-- 部门统计将通过JS动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 配置数据 ====================
+        const DEPARTMENTS = {
+            '中枢': { icon: '🎯', color: '#ef4444', key: 'core' },
+            '情报': { icon: '🔍', color: '#3b82f6', key: 'intel' },
+            '开发': { icon: '💻', color: '#10b981', key: 'dev' },
+            '文档': { icon: '📝', color: '#f59e0b', key: 'doc' },
+            '视觉': { icon: '🎨', color: '#8b5cf6', key: 'visual' },
+            '演示': { icon: '📊', color: '#ec4899', key: 'demo' },
+            '安卫': { icon: '🛡️', color: '#06b6d4', key: 'security' }
+        };
+
+        const EMPLOYEES = [
+            { id: 'lingshu', name: '灵枢', role: 'Supervisor', dept: '中枢', avatar: '🎯' },
+            { id: 'lingmou', name: '灵眸', role: '情报分析师', dept: '情报', avatar: '👁️' },
+            { id: 'lingyun', name: '灵韵', role: '内容策划', dept: '情报', avatar: '📢' },
+            { id: 'lingtan', name: '灵探', role: '市场研究', dept: '情报', avatar: '🔎' },
+            { id: 'lingxi', name: '灵析', role: '需求分析', dept: '开发', avatar: '📋' },
+            { id: 'linggou', name: '灵构', role: '系统架构', dept: '开发', avatar: '🏗️' },
+            { id: 'lingma', name: '灵码', role: '开发工程师', dept: '开发', avatar: '💻' },
+            { id: 'lingjian', name: '灵检', role: '代码审查', dept: '开发', avatar: '🔍' },
+            { id: 'lingce', name: '灵测', role: '测试工程师', dept: '开发', avatar: '🧪' },
+            { id: 'lingbi', name: '灵笔', role: '技术文档', dept: '文档', avatar: '✍️' },
+            { id: 'lingshen', name: '灵审', role: '内容审核', dept: '文档', avatar: '✓' },
+            { id: 'lingxuan', name: '灵宣', role: '产品文案', dept: '文档', avatar: '📣' },
+            { id: 'linghui', name: '灵绘', role: '图像生成', dept: '视觉', avatar: '🎨' },
+            { id: 'lingshe', name: '灵设', role: 'UI设计', dept: '视觉', avatar: '🖼️' },
+            { id: 'lingyan', name: '灵演', role: 'PPT制作', dept: '演示', avatar: '📽️' },
+            { id: 'lingwei', name: '灵卫', role: '安全运维', dept: '安卫', avatar: '🛡️' }
+        ];
+
+        // ==================== 状态管理 ====================
+        let currentTab = 'employees';
+        let refreshInterval = null;
+
+        // ==================== 标签页切换 ====================
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // 更新标签按钮状态
+            document.querySelectorAll('.ll-tab').forEach(t => {
+                t.classList.remove('ll-tab--active');
+                if (t.dataset.tab === tab) {
+                    t.classList.add('ll-tab--active');
+                }
+            });
+            
+            // 更新内容显示
+            document.querySelectorAll('.ll-tab-content').forEach(content => {
+                content.classList.remove('ll-tab-content--active');
+            });
+            document.getElementById(`tab-${tab}`).classList.add('ll-tab-content--active');
+        }
+
+        // ==================== 数据加载 ====================
+        async function loadData() {
+            const refreshBtn = document.querySelector('.refresh-btn');
+            refreshBtn.classList.add('spinning');
+            
+            try {
+                const res = await fetch('linglong-data.json?t=' + Date.now());
+                if (!res.ok) throw new Error('Failed to load');
+                const data = await res.json();
+                
+                updateStats(data);
+                renderEmployees(data.employees);
+                renderTasks(data.tasks);
+                renderDeptStats(data.employees);
+                
+                document.getElementById('last-update').textContent = 
+                    '更新于 ' + new Date(data.timestamp).toLocaleString('zh-CN');
+            } catch (error) {
+                console.error('Load error:', error);
+                renderDefaultData();
+            } finally {
+                setTimeout(() => refreshBtn.classList.remove('spinning'), 500);
+            }
+        }
+
+        // ==================== 更新统计 ====================
+        function updateStats(data) {
+            const stats = data.stats || {};
+            
+            animateValue('stat-online', stats.online || 11);
+            animateValue('stat-tokens', stats.tokens || '1.71M', true);
+            animateValue('stat-tasks', stats.tasks || 13);
+            animateValue('stat-rate', stats.rate || '2.4K', true);
+            
+            document.getElementById('stat-online-change').textContent = stats.onlineChange || 5;
+            document.getElementById('stat-tokens-change').textContent = stats.tokensChange || 12;
+            document.getElementById('stat-tasks-done').textContent = stats.tasksDone || 8;
+            document.getElementById('online-count').textContent = `${stats.online || 11}/16 在线`;
+        }
+
+        // ==================== 数值动画 ====================
+        function animateValue(id, value, isText = false) {
+            const el = document.getElementById(id);
+            el.classList.add('count-up');
+            el.textContent = value;
+            setTimeout(() => el.classList.remove('count-up'), 500);
+        }
+
+        // ==================== 渲染员工 ====================
+        function renderEmployees(employeeData) {
+            document.getElementById('employees-loading').style.display = 'none';
+            const grid = document.getElementById('employees-grid');
+            
+            const data = employeeData || EMPLOYEES.map((e, i) => ({
+                ...e,
+                status: Math.random() > 0.3 ? 'working' : 'idle',
+                task: Math.random() > 0.3 ? '处理中...' : '待命'
+            }));
+            
+            document.getElementById('employee-count').textContent = data.length;
+            
+            grid.innerHTML = data.map((emp, index) => {
+                const dept = DEPARTMENTS[emp.dept] || { icon: '●', color: '#64748b', key: '' };
+                const statusClass = emp.status === 'working' ? 'll-employee-status--working' : 'll-employee-status--idle';
+                const statusText = emp.status === 'working' ? '工作中' : '空闲';
+                const statusColor = emp.status === 'working' ? 'var(--ll-success)' : 'var(--ll-text-subtle)';
+                
+                return `
+                    <div class="ll-employee-card" style="animation-delay: ${index * 0.05}s">
+                        <div class="ll-employee-avatar dept-${dept.key}" data-dept="${dept.key}">${emp.avatar}</div>
+                        <div class="ll-employee-info">
+                            <div class="ll-employee-name">${emp.name}</div>
+                            <div class="ll-employee-role">${emp.role} · ${emp.dept}</div>
+                            <span class="ll-employee-status ${statusClass}">
+                                <span class="status-indicator status-indicator--${emp.status}"></span>
+                                ${statusText}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            grid.style.display = 'grid';
+        }
+
+        // ==================== 渲染任务 ====================
+        function renderTasks(taskData) {
+            document.getElementById('tasks-loading').style.display = 'none';
+            const list = document.getElementById('tasks-list');
+            
+            const tasks = taskData || [
+                { title: 'AI外贸情报日报生成', priority: 'high', assignee: '灵眸', dept: '情报', time: '10分钟前' },
+                { title: '代码审查 - Dashboard重构', priority: 'medium', assignee: '灵检', dept: '开发', time: '30分钟前' },
+                { title: '文档更新 - API接口', priority: 'low', assignee: '灵笔', dept: '文档', time: '1小时前' },
+                { title: 'UI设计 - 新版看板界面', priority: 'high', assignee: '灵设', dept: '视觉', time: '2小时前' },
+                { title: 'PPT制作 - 产品演示', priority: 'medium', assignee: '灵演', dept: '演示', time: '3小时前' }
+            ];
+            
+            const activeTasks = tasks.filter(t => t.priority !== 'low');
+            document.getElementById('task-count').textContent = activeTasks.length;
+            
+            list.innerHTML = tasks.map((task, index) => `
+                <div class="ll-task-item" style="animation-delay: ${index * 0.1}s">
+                    <div class="ll-task-priority ll-task-priority--${task.priority}"></div>
+                    <div class="ll-task-content">
+                        <div class="ll-task-title">${task.title}</div>
+                        <div class="ll-task-meta">${task.dept} · ${task.time}</div>
+                    </div>
+                    <div class="ll-task-assignee">
+                        <div class="ll-task-assignee-avatar">${task.assignee.charAt(0)}</div>
+                        <span class="ll-task-assignee-name">${task.assignee}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            list.style.display = 'flex';
+        }
+
+        // ==================== 渲染部门统计 ====================
+        function renderDeptStats(employeeData) {
+            const data = employeeData || EMPLOYEES.map(e => ({ ...e, status: Math.random() > 0.3 ? 'working' : 'idle' }));
+            
+            const deptStats = {};
+            data.forEach(emp => {
+                if (!deptStats[emp.dept]) {
+                    deptStats[emp.dept] = { total: 0, online: 0 };
+                }
+                deptStats[emp.dept].total++;
+                if (emp.status === 'working') {
+                    deptStats[emp.dept].online++;
+                }
+            });
+            
+            const container = document.getElementById('dept-stats');
+            container.innerHTML = Object.entries(deptStats).map(([dept, stats], index) => {
+                const deptInfo = DEPARTMENTS[dept] || { icon: '●', color: '#64748b' };
+                const percentage = Math.round((stats.online / stats.total) * 100);
+                
+                return `
+                    <div class="ll-stat-card" style="animation-delay: ${index * 0.1}s">
+                        <div class="ll-stat-icon" style="background: ${deptInfo.color}20; color: ${deptInfo.color}">
+                            ${deptInfo.icon}
+                        </div>
+                        <div class="ll-stat-label">${dept}部</div>
+                        <div class="ll-stat-value">${stats.online}/${stats.total}</div>
+                        <div class="ll-progress" style="margin-top: 12px;">
+                            <div class="ll-progress-bar" style="width: ${percentage}%; background: ${deptInfo.color}"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==================== 默认数据 ====================
+        function renderDefaultData() {
+            updateStats({});
+            renderEmployees();
+            renderTasks();
+            renderDeptStats();
+            document.getElementById('last-update').textContent = '更新于 ' + new Date().toLocaleString('zh-CN');
+        }
+
+        // ==================== 粒子效果 ====================
+        function initParticles() {
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+            
+            const particles = [];
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    radius: Math.random() * 2 + 1,
+                    opacity: Math.random() * 0.5 + 0.1
+                });
+            }
+            
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    
+                    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                    
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(96, 165, 250, ${p.opacity})`;
+                    ctx.fill();
+                });
+                
+                // 连接线
+                particles.forEach((p1, i) => {
+                    particles.slice(i + 1).forEach(p2 => {
+                        const dx = p1.x - p2.x;
+                        const dy = p1.y - p2.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (dist < 150) {
+                            ctx.beginPath();
+                            ctx.moveTo(p1.x, p1.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.strokeStyle = `rgba(96, 165, 250, ${0.1 * (1 - dist / 150)})`;
+                            ctx.stroke();
+                        }
+                    });
+                });
+                
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+
+        // ==================== 初始化 ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            initParticles();
+            loadData();
+            
+            // 自动刷新
+            refreshInterval = setInterval(loadData, 30000);
+        });
+
+        // 页面卸载时清理
+        window.addEventListener('beforeunload', () => {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+        });
+    </script>
+</body>
+</html>

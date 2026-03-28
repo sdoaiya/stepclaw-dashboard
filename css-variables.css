@@ -1,0 +1,406 @@
+/**
+ * 灵笼看板 v2.0 - CSS 变量定义
+ * Linglong Dashboard v2.0 - CSS Variables
+ * 
+ * 设计: 灵设 (UI设计师)
+ * 版本: 2.0.0
+ */
+
+/* ==================== 根变量定义 ==================== */
+:root {
+  /* ---------------- 色彩系统 ---------------- */
+  
+  /* 主色调 - Primary Colors */
+  --ll-primary-blue: #60a5fa;
+  --ll-primary-purple: #a78bfa;
+  --ll-primary-cyan: #22d3ee;
+  --ll-primary-pink: #f472b6;
+  
+  /* 主色调变体 */
+  --ll-primary-blue-dark: #3b82f6;
+  --ll-primary-purple-dark: #8b5cf6;
+  --ll-primary-cyan-dark: #06b6d4;
+  --ll-primary-pink-dark: #ec4899;
+  
+  /* 背景色 - Background Colors */
+  --ll-bg-deep: #0a0f1a;
+  --ll-bg-dark: #0f172a;
+  --ll-bg-surface: #1e293b;
+  --ll-bg-card: rgba(30, 41, 59, 0.6);
+  --ll-bg-glass: rgba(255, 255, 255, 0.05);
+  --ll-bg-glass-hover: rgba(255, 255, 255, 0.08);
+  
+  /* 功能色 - Functional Colors */
+  --ll-success: #10b981;
+  --ll-success-light: rgba(16, 185, 129, 0.1);
+  --ll-success-border: rgba(16, 185, 129, 0.3);
+  
+  --ll-warning: #f59e0b;
+  --ll-warning-light: rgba(245, 158, 11, 0.1);
+  --ll-warning-border: rgba(245, 158, 11, 0.3);
+  
+  --ll-danger: #ef4444;
+  --ll-danger-light: rgba(239, 68, 68, 0.1);
+  --ll-danger-border: rgba(239, 68, 68, 0.3);
+  
+  --ll-info: #3b82f6;
+  --ll-info-light: rgba(59, 130, 246, 0.1);
+  --ll-info-border: rgba(59, 130, 246, 0.3);
+  
+  /* 文字色 - Text Colors */
+  --ll-text-primary: #f8fafc;
+  --ll-text-secondary: #e2e8f0;
+  --ll-text-muted: #94a3b8;
+  --ll-text-subtle: #64748b;
+  --ll-text-disabled: #475569;
+  
+  /* 边框色 - Border Colors */
+  --ll-border-default: rgba(96, 165, 250, 0.1);
+  --ll-border-hover: rgba(96, 165, 250, 0.3);
+  --ll-border-active: rgba(96, 165, 250, 0.5);
+  --ll-border-glass: rgba(255, 255, 255, 0.1);
+  
+  /* ---------------- 渐变定义 ---------------- */
+  
+  /* 主渐变 */
+  --ll-gradient-primary: linear-gradient(135deg, var(--ll-primary-blue) 0%, var(--ll-primary-purple) 100%);
+  --ll-gradient-primary-reverse: linear-gradient(135deg, var(--ll-primary-purple) 0%, var(--ll-primary-blue) 100%);
+  
+  /* 背景渐变 */
+  --ll-gradient-bg: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+  --ll-gradient-bg-radial: radial-gradient(ellipse at top, rgba(96, 165, 250, 0.15) 0%, transparent 50%);
+  
+  /* 光效渐变 */
+  --ll-gradient-glow: linear-gradient(90deg, var(--ll-primary-blue), var(--ll-primary-purple), var(--ll-primary-cyan));
+  --ll-gradient-border: linear-gradient(90deg, rgba(96, 165, 250, 0.5), rgba(167, 139, 250, 0.5));
+  --ll-gradient-shimmer: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  
+  /* 文字渐变 */
+  --ll-gradient-text: linear-gradient(90deg, var(--ll-primary-blue), var(--ll-primary-purple));
+  
+  /* ---------------- 字体系统 ---------------- */
+  
+  /* 字体族 */
+  --ll-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --ll-font-mono: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+  
+  /* 字号 */
+  --ll-text-xs: 12px;
+  --ll-text-sm: 13px;
+  --ll-text-base: 14px;
+  --ll-text-lg: 16px;
+  --ll-text-xl: 18px;
+  --ll-text-2xl: 24px;
+  --ll-text-3xl: 32px;
+  --ll-text-4xl: 48px;
+  
+  /* 字重 */
+  --ll-font-normal: 400;
+  --ll-font-medium: 500;
+  --ll-font-semibold: 600;
+  --ll-font-bold: 700;
+  
+  /* 行高 */
+  --ll-leading-tight: 1.25;
+  --ll-leading-normal: 1.5;
+  --ll-leading-relaxed: 1.75;
+  
+  /* ---------------- 间距系统 ---------------- */
+  
+  /* 基础间距 */
+  --ll-space-1: 4px;
+  --ll-space-2: 8px;
+  --ll-space-3: 12px;
+  --ll-space-4: 16px;
+  --ll-space-5: 20px;
+  --ll-space-6: 24px;
+  --ll-space-8: 32px;
+  --ll-space-10: 40px;
+  --ll-space-12: 48px;
+  --ll-space-16: 64px;
+  
+  /* 组件间距 */
+  --ll-card-padding: 24px;
+  --ll-section-gap: 24px;
+  --ll-grid-gap: 20px;
+  --ll-element-gap: 16px;
+  
+  /* ---------------- 圆角系统 ---------------- */
+  
+  --ll-radius-sm: 6px;
+  --ll-radius-md: 8px;
+  --ll-radius-lg: 12px;
+  --ll-radius-xl: 16px;
+  --ll-radius-2xl: 20px;
+  --ll-radius-full: 9999px;
+  
+  /* ---------------- 阴影系统 ---------------- */
+  
+  /* 基础阴影 */
+  --ll-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --ll-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --ll-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
+  
+  /* 光效阴影 */
+  --ll-shadow-glow: 0 0 20px rgba(96, 165, 250, 0.3);
+  --ll-shadow-glow-purple: 0 0 20px rgba(167, 139, 250, 0.3);
+  --ll-shadow-glow-cyan: 0 0 20px rgba(34, 211, 238, 0.3);
+  
+  /* 悬浮阴影 */
+  --ll-shadow-hover: 0 10px 40px rgba(96, 165, 250, 0.15);
+  --ll-shadow-hover-purple: 0 10px 40px rgba(167, 139, 250, 0.15);
+  
+  /* 内阴影 */
+  --ll-shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  
+  /* ---------------- 玻璃态效果 ---------------- */
+  
+  /* 模糊度 */
+  --ll-blur-sm: blur(4px);
+  --ll-blur-md: blur(10px);
+  --ll-blur-lg: blur(20px);
+  --ll-blur-xl: blur(30px);
+  
+  /* 饱和度 */
+  --ll-saturate: saturate(180%);
+  
+  /* 玻璃态基础 */
+  --ll-glass-bg: rgba(30, 41, 59, 0.6);
+  --ll-glass-bg-light: rgba(255, 255, 255, 0.05);
+  --ll-glass-border: 1px solid rgba(96, 165, 250, 0.1);
+  --ll-glass-border-light: 1px solid rgba(255, 255, 255, 0.1);
+  
+  /* ---------------- 过渡动画 ---------------- */
+  
+  /* 持续时间 */
+  --ll-duration-fast: 150ms;
+  --ll-duration-base: 300ms;
+  --ll-duration-slow: 500ms;
+  --ll-duration-slower: 700ms;
+  
+  /* 缓动函数 */
+  --ll-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ll-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ll-ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ll-ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  /* 过渡简写 */
+  --ll-transition-fast: var(--ll-duration-fast) var(--ll-ease-out);
+  --ll-transition-base: var(--ll-duration-base) var(--ll-ease-out);
+  --ll-transition-slow: var(--ll-duration-slow) var(--ll-ease-out);
+  
+  /* ---------------- 布局系统 ---------------- */
+  
+  /* 容器 */
+  --ll-container-max: 1400px;
+  --ll-container-padding: 30px;
+  --ll-container-padding-mobile: 20px;
+  
+  /* 网格 */
+  --ll-grid-columns: 4;
+  --ll-grid-columns-tablet: 2;
+  --ll-grid-columns-mobile: 2;
+  
+  /* Z-index 层级 */
+  --ll-z-base: 0;
+  --ll-z-dropdown: 100;
+  --ll-z-sticky: 200;
+  --ll-z-fixed: 300;
+  --ll-z-modal: 400;
+  --ll-z-tooltip: 500;
+  --ll-z-toast: 600;
+  
+  /* ---------------- 部门配色 ---------------- */
+  
+  --ll-dept-core: #ef4444;       /* 中枢 - 红色 */
+  --ll-dept-intel: #3b82f6;      /* 情报 - 蓝色 */
+  --ll-dept-dev: #10b981;        /* 开发 - 绿色 */
+  --ll-dept-doc: #f59e0b;        /* 文档 - 橙色 */
+  --ll-dept-visual: #8b5cf6;     /* 视觉 - 紫色 */
+  --ll-dept-demo: #ec4899;       /* 演示 - 粉色 */
+  --ll-dept-security: #06b6d4;   /* 安卫 - 青色 */
+}
+
+/* ==================== 暗色模式 (默认) ==================== */
+[data-theme="dark"],
+:root {
+  color-scheme: dark;
+}
+
+/* ==================== 响应式断点变量 ==================== */
+@media (max-width: 768px) {
+  :root {
+    --ll-container-padding: 20px;
+    --ll-card-padding: 16px;
+    --ll-section-gap: 16px;
+    --ll-grid-gap: 12px;
+    --ll-text-3xl: 24px;
+    --ll-text-2xl: 20px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  :root {
+    --ll-grid-columns: 2;
+  }
+}
+
+@media (min-width: 1025px) {
+  :root {
+    --ll-grid-columns: 4;
+  }
+}
+
+/* ==================== 关键帧动画定义 ==================== */
+
+@keyframes ll-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes ll-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ll-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes ll-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes ll-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(96, 165, 250, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(96, 165, 250, 0.6); }
+}
+
+@keyframes ll-glow-purple {
+  0%, 100% { box-shadow: 0 0 20px rgba(167, 139, 250, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(167, 139, 250, 0.6); }
+}
+
+@keyframes ll-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ll-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ll-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes ll-slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ==================== 工具类 ==================== */
+
+/* 文字渐变 */
+.ll-text-gradient {
+  background: var(--ll-gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 玻璃态 */
+.ll-glass {
+  background: var(--ll-glass-bg);
+  backdrop-filter: var(--ll-blur-md);
+  -webkit-backdrop-filter: var(--ll-blur-md);
+  border: var(--ll-glass-border);
+}
+
+.ll-glass-premium {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  backdrop-filter: var(--ll-blur-lg) var(--ll-saturate);
+  -webkit-backdrop-filter: var(--ll-blur-lg) var(--ll-saturate);
+  border: var(--ll-glass-border-light);
+}
+
+/* 光效 */
+.ll-glow {
+  animation: ll-glow 2s ease-in-out infinite;
+}
+
+.ll-glow-purple {
+  animation: ll-glow-purple 2s ease-in-out infinite;
+}
+
+/* 悬浮效果 */
+.ll-hover-lift {
+  transition: transform var(--ll-transition-base), box-shadow var(--ll-transition-base);
+}
+
+.ll-hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--ll-shadow-hover);
+}
+
+/*  shimmer 效果 */
+.ll-shimmer {
+  background: var(--ll-gradient-shimmer);
+  background-size: 200% 100%;
+  animation: ll-shimmer 2s infinite;
+}
+
+/* 隐藏滚动条但保持功能 */
+.ll-scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.ll-scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* 自定义滚动条 */
+.ll-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.ll-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.ll-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(96, 165, 250, 0.3);
+  border-radius: 3px;
+}
+
+.ll-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(96, 165, 250, 0.5);
+}
