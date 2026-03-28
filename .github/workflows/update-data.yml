@@ -2,7 +2,7 @@ name: Update Dashboard Data
 
 on:
   schedule:
-    - cron: '*/2 * * * *'
+    - cron: '*/2 * * * *'  # 每2分钟
   workflow_dispatch:
 
 permissions:
@@ -24,6 +24,113 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch Real Data from API
+        id: fetch-data
+        run: |
+          # 尝试从本地API获取真实数据
+          API_URL="${{ secrets.LINGLONG_API_URL || 'http://localhost:18082' }}"
+          
+          # 创建数据获取脚本
+          cat > fetch-data.js << 'SCRIPT'
+          const http = require('http');
+          const fs = require('fs');
+          
+          const options = {
+            hostname: 'localhost',
+            port: 18082,
+            path: '/api/linglong-data',
+            method: 'GET',
+            timeout: 5000
+          };
+          
+          const req = http.request(options, (res) => {
+            let data = '';
+            res.on('data', (chunk) => data += chunk);
+            res.on('end', () => {
+              if (res.statusCode === 200) {
+                fs.writeFileSync('linglong-data.json', data);
+                console.log('Data fetched successfully');
+              } else {
+                console.error('API returned status:', res.statusCode);
+                process.exit(1);
+              }
+            });
+          });
+          
+          req.on('error', (e) => {
+            console.error('Fetch error:', e.message);
+            process.exit(1);
+          });
+          
+          req.on('timeout', () => {
+            console.error('Request timeout');
+            req.destroy();
+            process.exit(1);
+          });
+          
+          req.end();
+          SCRIPT
+          
+          # 由于GitHub Actions无法访问本地网络，使用模拟数据
+          # 实际部署时需要在服务器上运行API或使用ngrok
+          echo "GitHub Actions cannot access local API, using mock data generator..."
+          
+          # 生成带有随机变化的模拟数据
+          node -e "
+          const fs = require('fs');
+          const now = new Date().toISOString();
+          const online = 10 + Math.floor(Math.random() * 6);
+          const tasksDone = 8 + Math.floor(Math.random() * 3);
+          
+          const data = {
+            status: 'ok',
+            timestamp: now,
+            version: '2.0',
+            stats: {
+              online: online,
+              onlineChange: Math.floor(Math.random() * 5) - 2,
+              tokens: '1.71M',
+              tokensChange: Math.floor(Math.random() * 20),
+              tasks: 13,
+              tasksDone: tasksDone,
+              rate: '2.4K'
+            },
+            employees: [
+              { id: 'lingshu', name: '灵枢', role: 'Supervisor', dept: '中枢', avatar: '🎯', status: 'working', task: '任务调度' },
+              { id: 'lingmou', name: '灵眸', role: '情报分析师', dept: '情报', avatar: '👁️', status: 'working', task: '情报收集' },
+              { id: 'lingyun', name: '灵韵', role: '内容策划', dept: '情报', avatar: '📢', status: 'working', task: '数据可视化' },
+              { id: 'lingtan', name: '灵探', role: '市场研究', dept: '情报', avatar: '🔎', status: 'idle', task: '待命' },
+              { id: 'lingxi', name: '灵析', role: '需求分析', dept: '开发', avatar: '📋', status: 'working', task: 'PRD撰写' },
+              { id: 'linggou', name: '灵构', role: '系统架构', dept: '开发', avatar: '🏗️', status: 'working', task: '架构设计' },
+              { id: 'lingma', name: '灵码', role: '开发工程师', dept: '开发', avatar: '💻', status: 'working', task: '代码开发' },
+              { id: 'lingjian', name: '灵检', role: '代码审查', dept: '开发', avatar: '🔍', status: 'working', task: 'Code Review' },
+              { id: 'lingce', name: '灵测', role: '测试工程师', dept: '开发', avatar: '🧪', status: 'idle', task: '待命' },
+              { id: 'lingbi', name: '灵笔', role: '技术文档', dept: '文档', avatar: '✍️', status: 'working', task: '文档编写' },
+              { id: 'lingshen', name: '灵审', role: '内容审核', dept: '文档', avatar: '✓', status: 'idle', task: '待命' },
+              { id: 'lingxuan', name: '灵宣', role: '产品文案', dept: '文档', avatar: '📣', status: 'idle', task: '待命' },
+              { id: 'linghui', name: '灵绘', role: '图像生成', dept: '视觉', avatar: '🎨', status: 'working', task: '插画创作' },
+              { id: 'lingshe', name: '灵设', role: 'UI设计', dept: '视觉', avatar: '🖼️', status: 'idle', task: '待命' },
+              { id: 'lingyan', name: '灵演', role: 'PPT制作', dept: '演示', avatar: '📽️', status: 'idle', task: '待命' },
+              { id: 'lingwei', name: '灵卫', role: '安全运维', dept: '安卫', avatar: '🛡️', status: 'working', task: '系统监控' }
+            ],
+            tasks: [
+              { title: 'AI外贸情报日报生成', priority: 'high', assignee: '灵眸', dept: '情报', time: '10分钟前' },
+              { title: 'StepClaw Dashboard 重构', priority: 'high', assignee: '灵码', dept: '开发', time: '进行中' },
+              { title: '代码审查 - Dashboard模块', priority: 'medium', assignee: '灵检', dept: '开发', time: '30分钟前' },
+              { title: '文档更新 - API接口文档', priority: 'low', assignee: '灵笔', dept: '文档', time: '1小时前' },
+              { title: 'GitHub Actions 工作流优化', priority: 'medium', assignee: '灵构', dept: '开发', time: '2小时前' }
+            ]
+          };
+          
+          fs.writeFileSync('linglong-data.json', JSON.stringify(data, null, 2));
+          console.log('Mock data generated:', now);
+          "
+
       - name: Update StepClaw Data
         run: |
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
@@ -32,7 +139,7 @@ jobs:
           cat > data.json << 'DATAJSON'
           {
             "status": "ok",
-            "timestamp": "TIMESTAMP_PLACEHOLDER",
+            "timestamp": "TIMESTAMP_PH",
             "overview": {
               "sessions": { "total": 2, "active": 2, "channels": ["feishu"] },
               "tokens": { "total": 192840, "formatted": "192.8k" },
@@ -50,7 +157,7 @@ jobs:
                 "tokens": 85660,
                 "messages": 42,
                 "kind": "direct",
-                "updatedAt": "TIMESTAMP_PLACEHOLDER"
+                "updatedAt": "TIMESTAMP_PH"
               },
               {
                 "key": "agent:main:heartbeat",
@@ -60,7 +167,7 @@ jobs:
                 "tokens": 107180,
                 "messages": 128,
                 "kind": "direct",
-                "updatedAt": "TIMESTAMP_1H_PLACEHOLDER"
+                "updatedAt": "TIMESTAMP_1H_PH"
               }
             ],
             "agents": [
@@ -84,64 +191,8 @@ jobs:
           }
           DATAJSON
           
-          sed -i "s/TIMESTAMP_PLACEHOLDER/$TIMESTAMP/g" data.json
-          sed -i "s/TIMESTAMP_1H_PLACEHOLDER/$TIMESTAMP_1H/g" data.json
-
-      - name: Update Linglong Data
-        run: |
-          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          ONLINE=$((10 + RANDOM % 6))
-          TASKS_DONE=$((5 + RANDOM % 8))
-          ONLINE_CHANGE=$((RANDOM % 10))
-          TOKENS_CHANGE=$((RANDOM % 20))
-          
-          cat > linglong-data.json << 'LINGLONG'
-          {
-            "status": "ok",
-            "timestamp": "TIMESTAMP_PH",
-            "version": "2.0",
-            "stats": {
-              "online": ONLINE_PH,
-              "onlineChange": ONLINE_CHANGE_PH,
-              "tokens": "1.71M",
-              "tokensChange": TOKENS_CHANGE_PH,
-              "tasks": 13,
-              "tasksDone": TASKS_DONE_PH,
-              "rate": "2.4K"
-            },
-            "employees": [
-              { "id": "lingshu", "name": "灵枢", "role": "Supervisor", "dept": "中枢", "avatar": "🎯", "status": "working", "task": "任务调度" },
-              { "id": "lingmou", "name": "灵眸", "role": "情报分析师", "dept": "情报", "avatar": "👁️", "status": "working", "task": "情报收集" },
-              { "id": "lingyun", "name": "灵韵", "role": "内容策划", "dept": "情报", "avatar": "📢", "status": "working", "task": "数据可视化" },
-              { "id": "lingtan", "name": "灵探", "role": "市场研究", "dept": "情报", "avatar": "🔎", "status": "idle", "task": "待命" },
-              { "id": "lingxi", "name": "灵析", "role": "需求分析", "dept": "开发", "avatar": "📋", "status": "working", "task": "PRD撰写" },
-              { "id": "linggou", "name": "灵构", "role": "系统架构", "dept": "开发", "avatar": "🏗️", "status": "working", "task": "架构设计" },
-              { "id": "lingma", "name": "灵码", "role": "开发工程师", "dept": "开发", "avatar": "💻", "status": "working", "task": "代码开发" },
-              { "id": "lingjian", "name": "灵检", "role": "代码审查", "dept": "开发", "avatar": "🔍", "status": "working", "task": "Code Review" },
-              { "id": "lingce", "name": "灵测", "role": "测试工程师", "dept": "开发", "avatar": "🧪", "status": "idle", "task": "待命" },
-              { "id": "lingbi", "name": "灵笔", "role": "技术文档", "dept": "文档", "avatar": "✍️", "status": "working", "task": "文档编写" },
-              { "id": "lingshen", "name": "灵审", "role": "内容审核", "dept": "文档", "avatar": "✓", "status": "idle", "task": "待命" },
-              { "id": "lingxuan", "name": "灵宣", "role": "产品文案", "dept": "文档", "avatar": "📣", "status": "idle", "task": "待命" },
-              { "id": "linghui", "name": "灵绘", "role": "图像生成", "dept": "视觉", "avatar": "🎨", "status": "working", "task": "插画创作" },
-              { "id": "lingshe", "name": "灵设", "role": "UI设计", "dept": "视觉", "avatar": "🖼️", "status": "idle", "task": "待命" },
-              { "id": "lingyan", "name": "灵演", "role": "PPT制作", "dept": "演示", "avatar": "📽️", "status": "idle", "task": "待命" },
-              { "id": "lingwei", "name": "灵卫", "role": "安全运维", "dept": "安卫", "avatar": "🛡️", "status": "working", "task": "系统监控" }
-            ],
-            "tasks": [
-              { "title": "AI外贸情报日报生成", "priority": "high", "assignee": "灵眸", "dept": "情报", "time": "10分钟前" },
-              { "title": "StepClaw Dashboard 重构", "priority": "high", "assignee": "灵码", "dept": "开发", "time": "进行中" },
-              { "title": "代码审查 - Dashboard模块", "priority": "medium", "assignee": "灵检", "dept": "开发", "time": "30分钟前" },
-              { "title": "文档更新 - API接口文档", "priority": "low", "assignee": "灵笔", "dept": "文档", "time": "1小时前" },
-              { "title": "GitHub Actions 工作流优化", "priority": "medium", "assignee": "灵构", "dept": "开发", "time": "2小时前" }
-            ]
-          }
-          LINGLONG
-          
-          sed -i "s/TIMESTAMP_PH/$TIMESTAMP/g" linglong-data.json
-          sed -i "s/ONLINE_PH/$ONLINE/g" linglong-data.json
-          sed -i "s/ONLINE_CHANGE_PH/$ONLINE_CHANGE/g" linglong-data.json
-          sed -i "s/TOKENS_CHANGE_PH/$TOKENS_CHANGE/g" linglong-data.json
-          sed -i "s/TASKS_DONE_PH/$TASKS_DONE/g" linglong-data.json
+          sed -i "s/TIMESTAMP_PH/$TIMESTAMP/g" data.json
+          sed -i "s/TIMESTAMP_1H_PH/$TIMESTAMP_1H/g" data.json
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
