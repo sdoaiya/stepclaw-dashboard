@@ -1,0 +1,243 @@
+/* App 特定样式 */
+.app-container {
+  min-height: 100vh;
+}
+
+.page-container {
+  padding: 24px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #262626;
+  margin-bottom: 8px;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #8c8c8c;
+}
+
+/* 模块卡片 */
+.module-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.module-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.module-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin-bottom: 16px;
+}
+
+/* 统计卡片 */
+.stat-card {
+  .ant-statistic-content {
+    font-size: 28px;
+  }
+}
+
+/* 看板样式 */
+.kanban-board {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.kanban-column {
+  min-width: 280px;
+  max-width: 320px;
+  flex: 1;
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.kanban-column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+
+.kanban-column-title {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.kanban-column-count {
+  background: #e6e6e6;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  color: #595959;
+}
+
+.kanban-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 100px;
+}
+
+.kanban-task-card {
+  background: white;
+  border-radius: 6px;
+  padding: 12px;
+  cursor: grab;
+  position: relative;
+  border: 1px solid transparent;
+}
+
+.kanban-task-card:hover {
+  border-color: #d9d9d9;
+}
+
+.kanban-task-card.dragging {
+  cursor: grabbing;
+  opacity: 0.8;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 学习曲线 */
+.skill-tree-node {
+  position: relative;
+}
+
+.skill-tree-node::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  width: 2px;
+  height: 20px;
+  background: #d9d9d9;
+}
+
+.skill-level-bar {
+  height: 8px;
+  border-radius: 4px;
+  background: #f0f0f0;
+  overflow: hidden;
+}
+
+.skill-level-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+/* 监控面板 */
+.metric-card {
+  .metric-value {
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  
+  .metric-unit {
+    font-size: 14px;
+    color: #8c8c8c;
+    margin-left: 4px;
+  }
+  
+  .metric-trend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    margin-top: 8px;
+  }
+}
+
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status-dot.normal {
+  background: #52c41a;
+}
+
+.status-dot.warning {
+  background: #faad14;
+}
+
+.status-dot.critical {
+  background: #f5222d;
+}
+
+/* 日报 */
+.report-editor {
+  .editor-section {
+    margin-bottom: 24px;
+  }
+  
+  .section-title {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    color: #262626;
+  }
+}
+
+.mood-selector {
+  display: flex;
+  gap: 12px;
+}
+
+.mood-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.mood-option:hover {
+  background: #f5f5f5;
+}
+
+.mood-option.selected {
+  border-color: #1890ff;
+  background: #e6f7ff;
+}
+
+.mood-emoji {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.mood-label {
+  font-size: 12px;
+  color: #595959;
+}
