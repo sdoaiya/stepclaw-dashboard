@@ -1,12 +1,12 @@
 ﻿{
     "status":  "ok",
-    "timestamp":  "2026-03-28T08:28:01.554Z",
+    "timestamp":  "2026-03-28T08:30:01.600Z",
     "version":  "2.0",
     "stats":  {
                   "online":  10,
-                  "onlineChange":  -2,
-                  "tokens":  "1.80M",
-                  "tokensChange":  4,
+                  "onlineChange":  2,
+                  "tokens":  "1.83M",
+                  "tokensChange":  6,
                   "tasks":  13,
                   "tasksDone":  10,
                   "rate":  "2.4K"
@@ -195,7 +195,7 @@
                   }
               ],
     "stepclaw":  {
-                     "sessions":  6,
+                     "sessions":  8,
                      "activeSessions":  0
                  }
 }
