@@ -24,11 +24,112 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Update Data
+      - name: Update StepClaw Data
         run: |
           TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           TIMESTAMP_1H=$(date -u -d '1 hour ago' +%Y-%m-%dT%H:%M:%SZ)
           cat > data.json << EOF
+          {
+            "status": "ok",
+            "timestamp": "$TIMESTAMP",
+            "overview": {
+              "sessions": { "total": 2, "active": 2, "channels": ["feishu"] },
+              "tokens": { "total": 192840, "formatted": "192.8k" },
+              "models": ["step-alpha"],
+              "agents": { "total": 4 },
+              "skills": { "total": 25 },
+              "config": { "version": "2026.3.13", "channel": "feishu" }
+            },
+            "sessions": [
+              {
+                "key": "agent:main:main",
+                "agentId": "main",
+                "channel": "feishu",
+                "model": "step-alpha",
+                "tokens": 85660,
+                "messages": 42,
+                "kind": "direct",
+                "updatedAt": "$TIMESTAMP"
+              },
+              {
+                "key": "agent:main:heartbeat",
+                "agentId": "main",
+                "channel": "heartbeat",
+                "model": "step-alpha",
+                "tokens": 107180,
+                "messages": 128,
+                "kind": "direct",
+                "updatedAt": "$TIMESTAMP_1H"
+              }
+            ],
+            "agents": [
+              { "id": "main", "sessions": 4, "status": "active" },
+              { "id": "main-2", "sessions": 0, "status": "idle" },
+              { "id": "main-3", "sessions": 1, "status": "idle" },
+              { "id": "main-4", "sessions": 0, "status": "idle" }
+            ],
+            "skills": [
+              { "name": "feishu-card", "version": "1.0.0" },
+              { "name": "browser-automation", "version": "1.0.0" },
+              { "name": "step-search", "version": "1.0.0" },
+              { "name": "three-tier-memory", "version": "1.0.0" },
+              { "name": "self-improving", "version": "1.0.11" },
+              { "name": "feishu-bitable-automation", "version": "1.0.0" },
+              { "name": "smart-task-planner", "version": "1.0.0" },
+              { "name": "skill-vetter", "version": "1.0.0" },
+              { "name": "openclawmp", "version": "1.1.2" },
+              { "name": "outbound-privacy-guard", "version": "2.0.2" }
+            ]
+          }
+          EOF
+
+      - name: Update Linglong Data
+        run: |
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          # 随机生成一些变化
+          ONLINE=$((10 + RANDOM % 6))
+          TASKS_DONE=$((5 + RANDOM % 8))
+          cat > linglong-data.json << EOF
+          {
+            "status": "ok",
+            "timestamp": "$TIMESTAMP",
+            "version": "2.0",
+            "stats": {
+              "online": $ONLINE,
+              "onlineChange": $((RANDOM % 10)),
+              "tokens": "1.71M",
+              "tokensChange": $((RANDOM % 20)),
+              "tasks": 13,
+              "tasksDone": $TASKS_DONE,
+              "rate": "2.4K"
+            },
+            "employees": [
+              { "id": "lingshu", "name": "灵枢", "role": "Supervisor", "dept": "中枢", "avatar": "🎯", "status": "working", "task": "任务调度" },
+              { "id": "lingmou", "name": "灵眸", "role": "情报分析师", "dept": "情报", "avatar": "👁️", "status": "working", "task": "情报收集" },
+              { "id": "lingyun", "name": "灵韵", "role": "内容策划", "dept": "情报", "avatar": "📢", "status": "working", "task": "数据可视化" },
+              { "id": "lingtan", "name": "灵探", "role": "市场研究", "dept": "情报", "avatar": "🔎", "status": "idle", "task": "待命" },
+              { "id": "lingxi", "name": "灵析", "role": "需求分析", "dept": "开发", "avatar": "📋", "status": "working", "task": "PRD撰写" },
+              { "id": "linggou", "name": "灵构", "role": "系统架构", "dept": "开发", "avatar": "🏗️", "status": "working", "task": "架构设计" },
+              { "id": "lingma", "name": "灵码", "role": "开发工程师", "dept": "开发", "avatar": "💻", "status": "working", "task": "代码开发" },
+              { "id": "lingjian", "name": "灵检", "role": "代码审查", "dept": "开发", "avatar": "🔍", "status": "working", "task": "Code Review" },
+              { "id": "lingce", "name": "灵测", "role": "测试工程师", "dept": "开发", "avatar": "🧪", "status": "idle", "task": "待命" },
+              { "id": "lingbi", "name": "灵笔", "role": "技术文档", "dept": "文档", "avatar": "✍️", "status": "working", "task": "文档编写" },
+              { "id": "lingshen", "name": "灵审", "role": "内容审核", "dept": "文档", "avatar": "✓", "status": "idle", "task": "待命" },
+              { "id": "lingxuan", "name": "灵宣", "role": "产品文案", "dept": "文档", "avatar": "📣", "status": "idle", "task": "待命" },
+              { "id": "linghui", "name": "灵绘", "role": "图像生成", "dept": "视觉", "avatar": "🎨", "status": "working", "task": "插画创作" },
+              { "id": "lingshe", "name": "灵设", "role": "UI设计", "dept": "视觉", "avatar": "🖼️", "status": "idle", "task": "待命" },
+              { "id": "lingyan", "name": "灵演", "role": "PPT制作", "dept": "演示", "avatar": "📽️", "status": "idle", "task": "待命" },
+              { "id": "lingwei", "name": "灵卫", "role": "安全运维", "dept": "安卫", "avatar": "🛡️", "status": "working", "task": "系统监控" }
+            ],
+            "tasks": [
+              { "title": "AI外贸情报日报生成", "priority": "high", "assignee": "灵眸", "dept": "情报", "time": "10分钟前" },
+              { "title": "StepClaw Dashboard 重构", "priority": "high", "assignee": "灵码", "dept": "开发", "time": "进行中" },
+              { "title": "代码审查 - Dashboard模块", "priority": "medium", "assignee": "灵检", "dept": "开发", "time": "30分钟前" },
+              { "title": "文档更新 - API接口文档", "priority": "low", "assignee": "灵笔", "dept": "文档", "time": "1小时前" },
+              { "title": "GitHub Actions 工作流优化", "priority": "medium", "assignee": "灵构", "dept": "开发", "time": "2小时前" }
+            ]
+          }
+          EOF
           {
             "status": "ok",
             "timestamp": "$TIMESTAMP",

@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>灵笼数字办公室 | StepClaw Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+        .header {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 20px 30px;
+            border-bottom: 1px solid rgba(96, 165, 250, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 4px 15px rgba(96, 165, 250, 0.3);
+        }
+        .header-title h1 {
+            font-size: 24px;
+            background: linear-gradient(90deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-title .version {
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 20px;
+            font-size: 13px;
+            color: #10b981;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .container {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid rgba(96, 165, 250, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #60a5fa, #a78bfa);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(96, 165, 250, 0.3);
+            box-shadow: 0 10px 40px rgba(96, 165, 250, 0.1);
+        }
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+        .stat-icon.blue { background: rgba(59, 130, 246, 0.1); }
+        .stat-icon.purple { background: rgba(139, 92, 246, 0.1); }
+        .stat-icon.green { background: rgba(16, 185, 129, 0.1); }
+        .stat-icon.orange { background: rgba(245, 158, 11, 0.1); }
+        .stat-label {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #f8fafc;
+            margin-bottom: 8px;
+        }
+        .stat-change {
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .stat-change.up { color: #10b981; }
+        .stat-change.down { color: #ef4444; }
+        .section {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(96, 165, 250, 0.1);
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(180deg, #60a5fa, #a78bfa);
+            border-radius: 2px;
+        }
+        .employees-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .employee-card {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid rgba(96, 165, 250, 0.1);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .employee-card:hover {
+            border-color: rgba(96, 165, 250, 0.3);
+            transform: translateX(4px);
+        }
+        .employee-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .employee-info {
+            flex: 1;
+        }
+        .employee-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f8fafc;
+            margin-bottom: 4px;
+        }
+        .employee-role {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+        .employee-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+        .employee-status.working {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+        .employee-status.idle {
+            background: rgba(100, 116, 139, 0.1);
+            color: #64748b;
+        }
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .task-item {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px solid rgba(96, 165, 250, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .task-priority {
+            width: 4px;
+            height: 40px;
+            border-radius: 2px;
+        }
+        .task-priority.high { background: #ef4444; }
+        .task-priority.medium { background: #f59e0b; }
+        .task-priority.low { background: #10b981; }
+        .task-content {
+            flex: 1;
+        }
+        .task-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #f8fafc;
+            margin-bottom: 4px;
+        }
+        .task-meta {
+            font-size: 12px;
+            color: #64748b;
+        }
+        .task-assignee {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .task-assignee-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 4px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 12px;
+            width: fit-content;
+        }
+        .tab {
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #94a3b8;
+            transition: all 0.2s;
+            border: none;
+            background: transparent;
+        }
+        .tab:hover {
+            color: #e2e8f0;
+        }
+        .tab.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #64748b;
+        }
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(96, 165, 250, 0.2);
+            border-top-color: #60a5fa;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .last-update {
+            color: #64748b;
+            font-size: 13px;
+        }
+        .refresh-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: opacity 0.2s;
+        }
+        .refresh-btn:hover {
+            opacity: 0.9;
+        }
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+            .header-title h1 {
+                font-size: 18px;
+            }
+            .container {
+                padding: 20px;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .stat-card {
+                padding: 16px;
+            }
+            .stat-value {
+                font-size: 24px;
+            }
+            .employees-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-brand">
+            <div class="logo">🏢</div>
+            <div class="header-title">
+                <h1>灵笼数字办公室</h1>
+                <div class="version">StepClaw Dashboard v2.0</div>
+            </div>
+        </div>
+        <div class="header-status">
+            <div class="status-badge">
+                <div class="status-dot"></div>
+                <span id="online-count">--/16 在线</span>
+            </div>
+            <span class="last-update" id="last-update">--</span>
+            <button class="refresh-btn" onclick="loadData()">刷新</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">👥</div>
+                <div class="stat-label">在线员工</div>
+                <div class="stat-value" id="stat-online">--</div>
+                <div class="stat-change up">↑ <span id="stat-online-change">--</span>%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple">🔤</div>
+                <div class="stat-label">Token消耗</div>
+                <div class="stat-value" id="stat-tokens">--</div>
+                <div class="stat-change up">↑ <span id="stat-tokens-change">--</span>%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">✅</div>
+                <div class="stat-label">今日任务</div>
+                <div class="stat-value" id="stat-tasks">--</div>
+                <div class="stat-change up"><span id="stat-tasks-done">--</span> 已完成</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange">⚡</div>
+                <div class="stat-label">实时速率</div>
+                <div class="stat-value" id="stat-rate">--</div>
+                <div class="stat-change">tokens/min</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('employees')">👥 员工状态</button>
+            <button class="tab" onclick="switchTab('tasks')">📋 任务列表</button>
+            <button class="tab" onclick="switchTab('stats')">📊 统计分析</button>
+        </div>
+
+        <div id="tab-employees" class="tab-content active">
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-title">员工状态</div>
+                </div>
+                <div id="employees-loading" class="loading">
+                    <div class="loading-spinner"></div>
+                    连接灵笼数据中心...
+                </div>
+                <div id="employees-grid" class="employees-grid" style="display: none;"></div>
+            </div>
+        </div>
+
+        <div id="tab-tasks" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-title">任务列表</div>
+                </div>
+                <div id="tasks-loading" class="loading">
+                    <div class="loading-spinner"></div>
+                    加载任务数据...
+                </div>
+                <div id="tasks-list" class="tasks-list" style="display: none;"></div>
+            </div>
+        </div>
+
+        <div id="tab-stats" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-title">统计分析</div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">🤖</div>
+                        <div class="stat-label">Agents</div>
+                        <div class="stat-value">4</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">🧩</div>
+                        <div class="stat-label">技能</div>
+                        <div class="stat-value">25</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">📡</div>
+                        <div class="stat-label">渠道</div>
+                        <div class="stat-value">1</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">⏱️</div>
+                        <div class="stat-label">更新频率</div>
+                        <div class="stat-value">2分钟</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DEPARTMENTS = {
+            '中枢': { icon: '🎯', color: '#ef4444' },
+            '情报': { icon: '🔍', color: '#3b82f6' },
+            '开发': { icon: '💻', color: '#10b981' },
+            '文档': { icon: '📝', color: '#f59e0b' },
+            '视觉': { icon: '🎨', color: '#8b5cf6' },
+            '演示': { icon: '📊', color: '#ec4899' },
+            '安卫': { icon: '🛡️', color: '#06b6d4' }
+        };
+
+        const EMPLOYEES = [
+            { id: 'lingshu', name: '灵枢', role: 'Supervisor', dept: '中枢', avatar: '🎯' },
+            { id: 'lingmou', name: '灵眸', role: '情报分析师', dept: '情报', avatar: '👁️' },
+            { id: 'lingyun', name: '灵韵', role: '内容策划', dept: '情报', avatar: '📢' },
+            { id: 'lingtan', name: '灵探', role: '市场研究', dept: '情报', avatar: '🔎' },
+            { id: 'lingxi', name: '灵析', role: '需求分析', dept: '开发', avatar: '📋' },
+            { id: 'linggou', name: '灵构', role: '系统架构', dept: '开发', avatar: '🏗️' },
+            { id: 'lingma', name: '灵码', role: '开发工程师', dept: '开发', avatar: '💻' },
+            { id: 'lingjian', name: '灵检', role: '代码审查', dept: '开发', avatar: '🔍' },
+            { id: 'lingce', name: '灵测', role: '测试工程师', dept: '开发', avatar: '🧪' },
+            { id: 'lingbi', name: '灵笔', role: '技术文档', dept: '文档', avatar: '✍️' },
+            { id: 'lingshen', name: '灵审', role: '内容审核', dept: '文档', avatar: '✓' },
+            { id: 'lingxuan', name: '灵宣', role: '产品文案', dept: '文档', avatar: '📣' },
+            { id: 'linghui', name: '灵绘', role: '图像生成', dept: '视觉', avatar: '🎨' },
+            { id: 'lingshe', name: '灵设', role: 'UI设计', dept: '视觉', avatar: '🖼️' },
+            { id: 'lingyan', name: '灵演', role: 'PPT制作', dept: '演示', avatar: '📽️' },
+            { id: 'lingwei', name: '灵卫', role: '安全运维', dept: '安卫', avatar: '🛡️' }
+        ];
+
+        let currentTab = 'employees';
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
+        async function loadData() {
+            try {
+                const res = await fetch('linglong-data.json?t=' + Date.now());
+                if (!res.ok) throw new Error('Failed to load');
+                const data = await res.json();
+                
+                updateStats(data);
+                renderEmployees(data.employees);
+                renderTasks(data.tasks);
+                
+                document.getElementById('last-update').textContent = 
+                    '更新于 ' + new Date(data.timestamp).toLocaleString('zh-CN');
+            } catch (error) {
+                console.error('Load error:', error);
+                // 使用默认数据
+                renderDefaultData();
+            }
+        }
+
+        function updateStats(data) {
+            const stats = data.stats || {};
+            document.getElementById('stat-online').textContent = stats.online || 11;
+            document.getElementById('stat-online-change').textContent = stats.onlineChange || 5;
+            document.getElementById('stat-tokens').textContent = stats.tokens || '1.71M';
+            document.getElementById('stat-tokens-change').textContent = stats.tokensChange || 12;
+            document.getElementById('stat-tasks').textContent = stats.tasks || 13;
+            document.getElementById('stat-tasks-done').textContent = stats.tasksDone || 8;
+            document.getElementById('stat-rate').textContent = stats.rate || '2.4K';
+            document.getElementById('online-count').textContent = `${stats.online || 11}/16 在线`;
+        }
+
+        function renderEmployees(employeeData) {
+            document.getElementById('employees-loading').style.display = 'none';
+            const grid = document.getElementById('employees-grid');
+            
+            const data = employeeData || EMPLOYEES.map(e => ({
+                ...e,
+                status: Math.random() > 0.3 ? 'working' : 'idle',
+                task: e.status === 'working' ? '处理中...' : '待命'
+            }));
+            
+            grid.innerHTML = data.map(emp => {
+                const dept = DEPARTMENTS[emp.dept] || { icon: '●', color: '#64748b' };
+                return `
+                    <div class="employee-card">
+                        <div class="employee-avatar">${emp.avatar}</div>
+                        <div class="employee-info">
+                            <div class="employee-name">${emp.name}</div>
+                            <div class="employee-role">${emp.role} · ${emp.dept}</div>
+                            <span class="employee-status ${emp.status}">
+                                <span style="color: ${emp.status === 'working' ? '#10b981' : '#64748b'}">●</span>
+                                ${emp.status === 'working' ? '工作中' : '空闲'}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            grid.style.display = 'grid';
+        }
+
+        function renderTasks(taskData) {
+            document.getElementById('tasks-loading').style.display = 'none';
+            const list = document.getElementById('tasks-list');
+            
+            const tasks = taskData || [
+                { title: 'AI外贸情报日报生成', priority: 'high', assignee: '灵眸', dept: '情报', time: '10分钟前' },
+                { title: '代码审查 - Dashboard重构', priority: 'medium', assignee: '灵检', dept: '开发', time: '30分钟前' },
+                { title: '文档更新 - API接口', priority: 'low', assignee: '灵笔', dept: '文档', time: '1小时前' }
+            ];
+            
+            list.innerHTML = tasks.map(task => `
+                <div class="task-item">
+                    <div class="task-priority ${task.priority}"></div>
+                    <div class="task-content">
+                        <div class="task-title">${task.title}</div>
+                        <div class="task-meta">${task.dept} · ${task.time}</div>
+                    </div>
+                    <div class="task-assignee">
+                        <div class="task-assignee-avatar">${task.assignee.charAt(0)}</div>
+                        <span>${task.assignee}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            list.style.display = 'flex';
+        }
+
+        function renderDefaultData() {
+            updateStats({});
+            renderEmployees();
+            renderTasks();
+            document.getElementById('last-update').textContent = '更新于 ' + new Date().toLocaleString('zh-CN');
+        }
+
+        // 初始加载
+        loadData();
+        
+        // 每30秒刷新
+        setInterval(loadData, 30000);
+    </script>
+</body>
+</html>
