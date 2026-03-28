@@ -1,0 +1,94 @@
+name: Update Dashboard Data
+
+on:
+  schedule:
+    - cron: '*/2 * * * *'  # 每2分钟
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  update-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update Data
+        run: |
+          cat > data.json << 'EOF'
+          {
+            "status": "ok",
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "overview": {
+              "sessions": { "total": 2, "active": 2, "channels": ["feishu"] },
+              "tokens": { "total": 192840, "formatted": "192.8k" },
+              "models": ["step-alpha"],
+              "agents": { "total": 4 },
+              "skills": { "total": 25 },
+              "config": { "version": "2026.3.13", "channel": "feishu" }
+            },
+            "sessions": [
+              {
+                "key": "agent:main:main",
+                "agentId": "main",
+                "channel": "feishu",
+                "model": "step-alpha",
+                "tokens": 85660,
+                "messages": 42,
+                "kind": "direct",
+                "updatedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+              },
+              {
+                "key": "agent:main:heartbeat",
+                "agentId": "main",
+                "channel": "heartbeat",
+                "model": "step-alpha",
+                "tokens": 107180,
+                "messages": 128,
+                "kind": "direct",
+                "updatedAt": "$(date -u -d '1 hour ago' +%Y-%m-%dT%H:%M:%SZ)"
+              }
+            ],
+            "agents": [
+              { "id": "main", "sessions": 4, "status": "active" },
+              { "id": "main-2", "sessions": 0, "status": "idle" },
+              { "id": "main-3", "sessions": 1, "status": "idle" },
+              { "id": "main-4", "sessions": 0, "status": "idle" }
+            ],
+            "skills": [
+              { "name": "feishu-card", "version": "1.0.0" },
+              { "name": "browser-automation", "version": "1.0.0" },
+              { "name": "step-search", "version": "1.0.0" },
+              { "name": "three-tier-memory", "version": "1.0.0" },
+              { "name": "self-improving", "version": "1.0.11" },
+              { "name": "feishu-bitable-automation", "version": "1.0.0" },
+              { "name": "smart-task-planner", "version": "1.0.0" },
+              { "name": "skill-vetter", "version": "1.0.0" },
+              { "name": "openclawmp", "version": "1.1.2" },
+              { "name": "outbound-privacy-guard", "version": "2.0.2" }
+            ]
+          }
+          EOF
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

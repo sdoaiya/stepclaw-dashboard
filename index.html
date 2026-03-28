@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StepClaw 监控面板</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 20px 30px;
+            border-bottom: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            font-size: 24px;
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header .subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .container {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #334155;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: #60a5fa;
+        }
+        .stat-card .label {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #60a5fa;
+        }
+        .stat-card .detail {
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .section {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #334155;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .section h2 {
+            font-size: 18px;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section h2::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: #60a5fa;
+            border-radius: 2px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+        th {
+            color: #94a3b8;
+            font-weight: 500;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        td {
+            color: #e2e8f0;
+        }
+        tr:hover {
+            background: #334155;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .badge-feishu { background: #3b82f6; color: white; }
+        .badge-heartbeat { background: #10b981; color: white; }
+        .badge-agent { background: #8b5cf6; color: white; }
+        .badge-model { background: #f59e0b; color: white; }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+        .error {
+            background: #7f1d1d;
+            color: #fca5a5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .refresh-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .refresh-btn:hover {
+            background: #2563eb;
+        }
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+        }
+        .tab {
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #94a3b8;
+            transition: all 0.2s;
+        }
+        .tab:hover {
+            background: #334155;
+            color: #e2e8f0;
+        }
+        .tab.active {
+            background: #3b82f6;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+        }
+        .skill-card {
+            background: #334155;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+        .skill-name {
+            font-weight: 500;
+            color: #e2e8f0;
+            margin-bottom: 4px;
+        }
+        .skill-version {
+            color: #64748b;
+            font-size: 11px;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        .status-online { background: #10b981; }
+        .status-idle { background: #64748b; }
+        .last-update {
+            color: #64748b;
+            font-size: 12px;
+        }
+        .github-badge {
+            background: #333;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>🦞 StepClaw 监控面板</h1>
+            <div class="subtitle">GitHub Pages 部署 | 每2分钟自动更新</div>
+        </div>
+        <div class="header-actions">
+            <span class="github-badge">GitHub Pages</span>
+            <span class="last-update" id="last-update">-</span>
+            <button class="refresh-btn" onclick="loadData()">刷新</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="error-container"></div>
+        
+        <div class="stats-grid" id="stats-container">
+            <div class="stat-card">
+                <div class="label">📊 总会话</div>
+                <div class="value" id="stat-sessions">-</div>
+                <div class="detail">活跃会话</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">🔤 Token消耗</div>
+                <div class="value" id="stat-tokens">-</div>
+                <div class="detail">累计使用</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">🤖 Agents</div>
+                <div class="value" id="stat-agents">-</div>
+                <div class="detail">运行中</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">🧩 技能</div>
+                <div class="value" id="stat-skills">-</div>
+                <div class="detail">已安装</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">📡 渠道</div>
+                <div class="value" id="stat-channels">-</div>
+                <div class="detail">已连接</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">⏱️ 更新频率</div>
+                <div class="value">2分钟</div>
+                <div class="detail">自动同步</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('sessions')">💬 会话</div>
+            <div class="tab" onclick="switchTab('agents')">🤖 Agents</div>
+            <div class="tab" onclick="switchTab('skills')">🧩 技能</div>
+        </div>
+
+        <div id="tab-sessions" class="tab-content active">
+            <div class="section">
+                <div class="section-header">
+                    <h2>会话列表</h2>
+                </div>
+                <div id="sessions-loading" class="loading">加载中...</div>
+                <div id="sessions-empty" class="empty-state" style="display: none;">暂无会话数据</div>
+                <table id="sessions-table" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>会话</th>
+                            <th>Agent</th>
+                            <th>渠道</th>
+                            <th>模型</th>
+                            <th>Token</th>
+                            <th>消息数</th>
+                            <th>更新时间</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sessions-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="tab-agents" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <h2>Agent 列表</h2>
+                </div>
+                <div id="agents-loading" class="loading">加载中...</div>
+                <div id="agents-empty" class="empty-state" style="display: none;">暂无 Agent 数据</div>
+                <table id="agents-table" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Agent ID</th>
+                            <th>会话数</th>
+                            <th>状态</th>
+                        </tr>
+                    </thead>
+                    <tbody id="agents-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="tab-skills" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <h2>已安装技能</h2>
+                </div>
+                <div id="skills-loading" class="loading">加载中...</div>
+                <div id="skills-empty" class="empty-state" style="display: none;">暂无技能数据</div>
+                <div id="skills-grid" class="skills-grid" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'sessions';
+        let dashboardData = null;
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.tab:nth-child(${['sessions','agents','skills'].indexOf(tab)+1})`).classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
+        async function loadData() {
+            try {
+                document.getElementById('error-container').innerHTML = '';
+                
+                const res = await fetch('data.json?t=' + Date.now());
+                if (!res.ok) throw new Error('Failed to load data');
+                
+                dashboardData = await res.json();
+                
+                if (dashboardData.status === 'ok') {
+                    updateStats(dashboardData);
+                    renderSessions(dashboardData.sessions);
+                    renderAgents(dashboardData.agents);
+                    renderSkills(dashboardData.skills);
+                    document.getElementById('last-update').textContent = '更新于 ' + new Date(dashboardData.timestamp).toLocaleString('zh-CN');
+                }
+            } catch (error) {
+                console.error('Failed to load data:', error);
+                document.getElementById('error-container').innerHTML = `
+                    <div class="error">加载失败: ${error.message}</div>
+                `;
+            }
+        }
+
+        function updateStats(data) {
+            const ov = data.overview;
+            document.getElementById('stat-sessions').textContent = ov.sessions.total;
+            document.getElementById('stat-tokens').textContent = ov.tokens.formatted;
+            document.getElementById('stat-agents').textContent = ov.agents.total;
+            document.getElementById('stat-skills').textContent = ov.skills.total;
+            document.getElementById('stat-channels').textContent = ov.sessions.channels.length;
+        }
+
+        function renderSessions(sessions) {
+            document.getElementById('sessions-loading').style.display = 'none';
+            
+            if (sessions && sessions.length > 0) {
+                const tbody = document.getElementById('sessions-tbody');
+                tbody.innerHTML = sessions.map(s => `
+                    <tr>
+                        <td title="${s.key}">${s.key.split(':').pop().substring(0, 12)}</td>
+                        <td><span class="badge badge-agent">${s.agentId}</span></td>
+                        <td><span class="badge badge-${s.channel}">${s.channel}</span></td>
+                        <td><span class="badge badge-model">${s.model}</span></td>
+                        <td>${(s.tokens / 1000).toFixed(1)}k</td>
+                        <td>${s.messages}</td>
+                        <td>${new Date(s.updatedAt).toLocaleString('zh-CN')}</td>
+                    </tr>
+                `).join('');
+                document.getElementById('sessions-table').style.display = 'table';
+            } else {
+                document.getElementById('sessions-empty').style.display = 'block';
+            }
+        }
+
+        function renderAgents(agents) {
+            document.getElementById('agents-loading').style.display = 'none';
+            
+            if (agents && agents.length > 0) {
+                const tbody = document.getElementById('agents-tbody');
+                tbody.innerHTML = agents.map(a => `
+                    <tr>
+                        <td><span class="badge badge-agent">${a.id}</span></td>
+                        <td>${a.sessions}</td>
+                        <td><span class="status-indicator status-${a.status === 'active' ? 'online' : 'idle'}"></span>${a.status === 'active' ? '运行中' : '空闲'}</td>
+                    </tr>
+                `).join('');
+                document.getElementById('agents-table').style.display = 'table';
+            } else {
+                document.getElementById('agents-empty').style.display = 'block';
+            }
+        }
+
+        function renderSkills(skills) {
+            document.getElementById('skills-loading').style.display = 'none';
+            
+            if (skills && skills.length > 0) {
+                const grid = document.getElementById('skills-grid');
+                grid.innerHTML = skills.map(s => `
+                    <div class="skill-card">
+                        <div class="skill-name">${s.name}</div>
+                        <div class="skill-version">v${s.version}</div>
+                    </div>
+                `).join('');
+                document.getElementById('skills-grid').style.display = 'grid';
+            } else {
+                document.getElementById('skills-empty').style.display = 'block';
+            }
+        }
+
+        loadData();
+        setInterval(loadData, 30000);
+    </script>
+</body>
+</html>

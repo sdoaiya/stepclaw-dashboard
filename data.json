@@ -1,0 +1,52 @@
+{
+  "status": "ok",
+  "timestamp": "2026-03-28T04:13:00.000Z",
+  "overview": {
+    "sessions": { "total": 2, "active": 2, "channels": ["feishu"] },
+    "tokens": { "total": 192840, "formatted": "192.8k" },
+    "models": ["step-alpha"],
+    "agents": { "total": 4 },
+    "skills": { "total": 25 },
+    "config": { "version": "2026.3.13", "channel": "feishu" }
+  },
+  "sessions": [
+    {
+      "key": "agent:main:main",
+      "agentId": "main",
+      "channel": "feishu",
+      "model": "step-alpha",
+      "tokens": 85660,
+      "messages": 42,
+      "kind": "direct",
+      "updatedAt": "2026-03-28T04:04:15.275Z"
+    },
+    {
+      "key": "agent:main:heartbeat",
+      "agentId": "main",
+      "channel": "heartbeat",
+      "model": "step-alpha",
+      "tokens": 107180,
+      "messages": 128,
+      "kind": "direct",
+      "updatedAt": "2026-03-28T03:46:31.056Z"
+    }
+  ],
+  "agents": [
+    { "id": "main", "sessions": 4, "status": "active" },
+    { "id": "main-2", "sessions": 0, "status": "idle" },
+    { "id": "main-3", "sessions": 1, "status": "idle" },
+    { "id": "main-4", "sessions": 0, "status": "idle" }
+  ],
+  "skills": [
+    { "name": "feishu-card", "version": "1.0.0" },
+    { "name": "browser-automation", "version": "1.0.0" },
+    { "name": "step-search", "version": "1.0.0" },
+    { "name": "three-tier-memory", "version": "1.0.0" },
+    { "name": "self-improving", "version": "1.0.11" },
+    { "name": "feishu-bitable-automation", "version": "1.0.0" },
+    { "name": "smart-task-planner", "version": "1.0.0" },
+    { "name": "skill-vetter", "version": "1.0.0" },
+    { "name": "openclawmp", "version": "1.1.2" },
+    { "name": "outbound-privacy-guard", "version": "2.0.2" }
+  ]
+}
