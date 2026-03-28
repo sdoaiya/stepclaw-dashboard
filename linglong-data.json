@@ -1,14 +1,14 @@
 ﻿{
     "status":  "ok",
-    "timestamp":  "2026-03-28T06:48:01.099Z",
+    "timestamp":  "2026-03-28T06:50:01.094Z",
     "version":  "2.0",
     "stats":  {
                   "online":  10,
-                  "onlineChange":  2,
+                  "onlineChange":  -1,
                   "tokens":  "1.74M",
-                  "tokensChange":  8,
+                  "tokensChange":  9,
                   "tasks":  13,
-                  "tasksDone":  9,
+                  "tasksDone":  10,
                   "rate":  "2.4K"
               },
     "employees":  [
