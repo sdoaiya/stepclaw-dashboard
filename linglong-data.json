@@ -1,12 +1,12 @@
 ﻿{
     "status":  "ok",
-    "timestamp":  "2026-03-28T11:52:01.299Z",
+    "timestamp":  "2026-03-28T11:54:01.273Z",
     "version":  "2.0",
     "stats":  {
                   "online":  10,
-                  "onlineChange":  0,
+                  "onlineChange":  2,
                   "tokens":  "1.75M",
-                  "tokensChange":  4,
+                  "tokensChange":  8,
                   "tasks":  13,
                   "tasksDone":  10,
                   "rate":  "2.4K"
